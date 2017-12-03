@@ -1,5 +1,5 @@
 <head>
-  <title> k247 </title>
+  <title> OTV </title>
   <meta http-equiv="refresh" content="{{ time_left }}"/>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <!-- Compiled and minified CSS -->
@@ -7,19 +7,28 @@
 
   <!-- Compiled and minified JavaScript -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+  
           
 </head>
-<body>
-<div id="ytplayer"></div>
-<div id="np"><b>Now Playing:</b> {{ video_list[0][3] }} </div>
-</div>
-<div id="videolist">
+<body style="background-color:#222;color:#666">
+  <div class="row">
+    <div class="col s12">
+      <div id="ytplayer"></div>
+      <div id="np"><b>Now Playing:</b> {{ video_list[0][3] }}<br/>
+	<b> Up Next: </b>
+	<ul>
+	  {% for video in video_list[1:4] %}
+	  <li class=video>{{ video[3] }}</li>
+	  {% endfor %}
+	</ul>
+      </div>
+    </div>
+  
+  
+  </div>
 
-{% for video in video_list[1:] %}
-    <div class=video>{{ video[3] }}</div>
-  {% endfor %}
-
-</div>
 
 <script>
 var tag = document.createElement('script');
@@ -30,8 +39,8 @@ var player;
 
 function onYouTubePlayerAPIReady() {
     player = new YT.Player('ytplayer', {
-        height: '480',
-        width: '853',
+        height: '700',
+        width: '1200',
     videoId: '{{ current_video }}',
     autoplay: 1,
         playerVars: {

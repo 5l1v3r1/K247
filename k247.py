@@ -16,9 +16,13 @@ class otv_robot(object):
             if video_time < 0:
                 return video[1], str(prev_time), str(int(video[4]-prev_time))
             else:
-                video_watched(video[0])
+                self.video_watched(video[0])
             return video_list[0][0], "0", "0"
 
+    def video_watched(self,v_id):
+        self.cur.execute("UPDATE video set watched='1' where id='{}'".format(v_id))
+        self.con.commit
+        
     def read_videos(self,video_file):
         self.clear_db()
         with open(video_file) as data_file:    
@@ -31,7 +35,6 @@ class otv_robot(object):
         return 3600*h + 60*m + s
     
     def add_video(self,url):
-        # Handle long urls or video ids]
         if len(url) > 30:
             url_data = urlparse.urlparse(url)
             url = urlparse.parse_qs(url_data.query)["v"][0]
@@ -40,19 +43,18 @@ class otv_robot(object):
         video_snippet = self.get_video_data(url, self.key, "snippet")
         video_title = video_snippet['items'][0]['snippet']['title']
         video_duration = self.minutes_to_seconds(str(isodate.parse_duration(video_details['items'][0]['contentDetails']['duration'])))
-        con = sql.connect("database.db")
-        cur = con.cursor()
-        cur.execute("INSERT INTO video (url, votes, comment, duration) VALUES (?,?,?,?)", (url, "0", video_title, video_duration))
-        con.commit()
+        self.cur.execute("INSERT INTO video (url, watched, comment, duration) VALUES (?,?,?,?)", (url, "0", video_title, video_duration))
+        self.con.commit()
     
     def get_video_data(self,url, key, part): #contentDetails or snippet
         request = "https://www.googleapis.com/youtube/v3/videos?id={}&part={}&key={}".format(url,part, key)
-        r = requests.get(request)
-        return r.json()
+        return requests.get(request).json()
     
     def list_videos(self,params=()):
-        result = self.cur.execute("select * from video")
-        return result.fetchall()
+        return self.cur.execute("select * from video where watched = '0'").fetchall()
+
+    def list_all_videos(self):
+        return self.cur.execute("select * from video").fetchall()
 
     def clear_db(self):
         self.cur.execute("delete from video")
