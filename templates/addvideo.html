@@ -30,8 +30,7 @@
 <script>
 $("#submitVideo").click(function() {
     $.get( "/add", { test: $("#video").val() } );
-$("#videolist").load(location.href+" #videolist>*","");
-location.reload()
+location.reload();
     });
     
 $(".del").click(function(){

@@ -12,40 +12,22 @@
 <body>
 <div id="ytplayer"></div>
 <div id="np"><b>Now Playing:</b> {{ video_list[0][3] }} </div>
-<div id="add">
-    
-  <form class="col s6" id="addVideo">
-    <div class="row">
-      <div class="col s6">
-	<input id="video"></input>
-      </div>
-      <div class="col s6">
-	<button id="submitVideo" type="button">Add</button>
-      </div>
-      
-    </div>
-    
-    </form>
-</div>
-
 </div>
 <div id="videolist">
 
 {% for video in video_list[1:] %}
-    <div class=video>{{ video[3] }}<button class="del" value="{{ video[0] }}">Delete</button></div>
+    <div class=video>{{ video[3] }}</div>
   {% endfor %}
 
 </div>
 
 <script>
-// Load the IFrame Player API code asynchronously.
 var tag = document.createElement('script');
 tag.src = "https://www.youtube.com/player_api";
 var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-// Replace the 'ytplayer' element with an <iframe> and
-// YouTube player after the API code downloads.
 var player;
+
 function onYouTubePlayerAPIReady() {
     player = new YT.Player('ytplayer', {
         height: '480',
@@ -59,20 +41,6 @@ function onYouTubePlayerAPIReady() {
     'modestbranding': 1,
     'start': '{{ video_start }}'
         }
-    });
-    }
-    // this is the id of the submit button
-    
-
-    
-$("#submitVideo").click(function() {
-    $.get( "/add", { test: $("#video").val() } );
-    $("#videolist").load(location.href+" #videolist>*","");
-    });
-    
-$(".del").click(function(){
-    $.get("/del", { id: $(this).val() } );
-    $("#videolist").load(location.href+" #videolist>*","");
-    });
-    
+});
+}
 </script></body>
